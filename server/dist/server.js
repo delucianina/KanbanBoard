@@ -23,7 +23,7 @@ if (process.env.PORT) {
     // Use the __dirname variable along with the join function from path to share the dist folder in client through express.static()
     app.use(express.static(join(__dirname, '../client/dist')));
     // Create a catch-all route with a wildcard(*) to send the index.html file in client/dist
-    app.get('*', (req, res) => {
+    app.get('*', (_, res) => {
         res.sendFile(join(__dirname, '../client/dist/index.html'));
     });
 }

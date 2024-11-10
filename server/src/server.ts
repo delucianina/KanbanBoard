@@ -33,7 +33,7 @@ if (process.env.PORT) {
   app.use(express.static(join(__dirname, '../client/dist')));
 
   // Create a catch-all route with a wildcard(*) to send the index.html file in client/dist
-  app.get('*', (req, res) => {
+  app.get('*', (_, res) => {
     res.sendFile(join(__dirname, '../client/dist/index.html'));
   });
 }
@@ -43,3 +43,4 @@ sequelize.sync({force: forceDatabaseRefresh}).then(() => {
     console.log(`Server is listening on port ${PORT}`);
   });
 });
+
