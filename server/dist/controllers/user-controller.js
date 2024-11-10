@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 const { sign, verify } = jwt;
+// make a token 
 function createToken(user_id) {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
@@ -40,25 +41,17 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     const { username, password } = req.body;
     // Find a user in the database by the username provided in req.body
-    const user = await User.findOne({
-        where: {
-            username
-        }
-    });
+    const user = await User.findOne({ where: { username } });
     // If no user found, send a 403 json response with a user not found message and return
     if (!user) {
-        res.status(403).json({
-            message: 'No user found with that email address'
-        });
+        res.status(403).json({ message: 'User was not found' });
         return;
     }
     // If user is found, verify the password is correct (ie. user.validatePassword(password))
-    const valid_pass = await user.validatePassword(password);
     // If password is validated then create a jwt token using the createToken function above and passing their id
-    if (!valid_pass) {
-        res.status(403).json({
-            message: 'Incorrect password'
-        });
+    const isPasswordValid = await user.validatePassword(password);
+    if (!isPasswordValid) {
+        res.status(403).json({ message: 'Password is invalid' });
         return;
     }
     const token = createToken(user.id);
@@ -66,7 +59,7 @@ export const loginUser = async (req, res) => {
     res.cookie('token', token, {
         httpOnly: true
     });
-    // Send a json response back with the user attached
+    // Send the user in a json response - res.json(user)
     res.json(user);
 };
 // Retrieve a user by their jwt
